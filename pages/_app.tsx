@@ -1,6 +1,8 @@
 // import App, { AppProps, AppContext } from 'next/app'
 
 import "react-toastify/dist/ReactToastify.css";
+import "styles/asteroid.scss";
+import "styles/rarity-card.scss";
 import "./../src/styles.css";
 
 import { ThemeProvider as EmotionThemeProvider } from "@emotion/react";
@@ -9,13 +11,21 @@ import {
   StylesProvider,
   ThemeProvider as MaterialThemeProvider,
 } from "@mui/styles";
+import { CoreSpinner } from "core/CoreSpinner";
 import { GlobalStyle } from "GlobalStyle";
 import { AppProps } from "next/app";
 import Head from "next/head";
-import { useEffect } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import { theme } from "theme";
+import { GlobalDialog } from "views/common/GlobalDialog";
+import { GlobalSpinner } from "views/common/GlobalSpinner";
 import { Navbar } from "views/common/Navbar";
+import {
+  WalletProvider,
+  StaticWalletProvider,
+} from "@terra-money/wallet-provider";
+import { Networks, walletConnectChainIds } from "constants/networks";
 import ReactGA from "react-ga";
 
 if (typeof window !== "undefined") {
@@ -23,6 +33,22 @@ if (typeof window !== "undefined") {
   ReactGA.pageview(window.location.pathname + window.location.search);
 }
 
+const TerraWalletProvider = ({ children }) => {
+  const isBrowser = typeof window !== "undefined";
+
+  return isBrowser ? (
+    <WalletProvider
+      defaultNetwork={Networks.mainnet}
+      walletConnectChainIds={walletConnectChainIds}
+    >
+      {children}
+    </WalletProvider>
+  ) : (
+    <StaticWalletProvider defaultNetwork={Networks.mainnet}>
+      {children}
+    </StaticWalletProvider>
+  );
+};
 const CustomApp = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     const jssStyles = document.querySelector("#jss-server-side");
@@ -33,6 +59,14 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
 
   return (
     <>
+      {/* {Array.from({ length: 10 }).map((n, i) => {
+        return (
+          <div
+            className={`asteroid ${`asteroid-${i + 1}`}`}
+            key={`asteroid_${i}`}
+          />
+        );
+      })} */}
       <Head>
         <title>The Normal Launchpad - NORMIES</title>
       </Head>
@@ -40,21 +74,25 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
       <StylesProvider injectFirst>
         <MaterialThemeProvider theme={theme}>
           <EmotionThemeProvider theme={theme}>
-            <CssBaseline />
-            <ToastContainer
-              position="top-right"
-              hideProgressBar
-              pauseOnFocusLoss={false}
-              closeButton={true}
-              icon={false}
-              autoClose={10000}
-              newestOnTop
-              closeOnClick={false}
-              theme="light"
-            />
-            <Navbar>
-              <Component {...pageProps} />
-            </Navbar>
+            <TerraWalletProvider>
+              <CssBaseline />
+              <GlobalSpinner />
+              <GlobalDialog />
+              <ToastContainer
+                position="top-right"
+                hideProgressBar
+                pauseOnFocusLoss={false}
+                closeButton={true}
+                icon={false}
+                autoClose={10000}
+                newestOnTop
+                closeOnClick={false}
+                theme="light"
+              />
+              <Navbar>
+                <Component {...pageProps} />
+              </Navbar>
+            </TerraWalletProvider>
           </EmotionThemeProvider>
         </MaterialThemeProvider>
       </StylesProvider>
