@@ -243,16 +243,14 @@ export const LaunchpadPage = () => {
 
   return (
     <>
-      {/* <Typography variant="h1">Normies mint wave 2</Typography> */}
-      <Box display="flex" justifyContent="center">
+      <ResponsiveBox display="flex" justifyContent="center">
         <Image
           src="/static/images/mintwave.png"
           alt="mint_wave"
-          layout="fixed"
-          height={350}
-          width={1400}
+          height={540}
+          width={960}
         />
-      </Box>
+      </ResponsiveBox>
       <Box>
         <Typography marginTop={5} marginBottom={5}>
           Normies is a unique collection of 555 pixel characters created by
@@ -353,4 +351,19 @@ const ResponsiveTextField = styled(TextField)(({ theme }) => ({
     marginBottom: 10,
   },
   [theme.breakpoints.down("lg")]: {},
+}));
+
+const ImageWrapper = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    maxHeight: 270,
+    maxWidth: 480,
+  },
+  [theme.breakpoints.down("md")]: {
+    maxHeight: 270,
+    maxWidth: 480,
+  },
+  [theme.breakpoints.down("lg")]: {
+    maxHeight: 540,
+    maxWidth: 960,
+  },
 }));

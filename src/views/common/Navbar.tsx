@@ -272,7 +272,7 @@ export const Navbar = observer((props: Props) => {
         </StyledAppBar>
         <Box minHeight="100vh" marginTop={2}>
           <img
-            src="/static/images/websitebggif.gif"
+            src="/static/images/backgroundgif.gif"
             style={{
               minHeight: "100%",
               minWidth: "1024px",
