@@ -226,14 +226,21 @@ export const LaunchpadPage = () => {
 
   return (
     <>
-      <ResponsiveBox display="flex" justifyContent="center">
+      <Box display="flex" justifyContent="center">
+        {/* <Image
+          src="/static/images/mintwave-bg.png"
+          alt="mint_wave"
+          height={540}
+          width={960}
+          objectPosition="relative"
+        /> */}
         <Image
           src="/static/images/mintwave.png"
           alt="mint_wave"
           height={540}
           width={960}
         />
-      </ResponsiveBox>
+      </Box>
       <Box>
         <Typography marginTop={5} marginBottom={5}>
           Normies is a unique collection of 555 pixel characters created by
@@ -253,7 +260,7 @@ export const LaunchpadPage = () => {
       </Box>
 
       <Box
-        marginTop={10}
+        marginTop={5}
         justifyItems="center"
         justifyContent="center"
         alignItems="center"
@@ -307,7 +314,7 @@ export const LaunchpadPage = () => {
       </Box>
 
       <Box
-        marginTop={10}
+        marginTop={5}
         display="flex"
         flexDirection="column"
         justifyItems="center"
@@ -351,17 +358,3 @@ export const LaunchpadPage = () => {
     </>
   );
 };
-
-const ResponsiveBox = styled(Box)(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-around",
-  marginTop: 5,
-  flexDirection: "column",
-  [theme.breakpoints.down("sm")]: {
-    flexDirection: "column",
-  },
-  [theme.breakpoints.down("md")]: {
-    flexDirection: "column",
-  },
-  [theme.breakpoints.down("lg")]: {},
-}));
