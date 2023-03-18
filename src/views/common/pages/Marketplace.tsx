@@ -1,10 +1,22 @@
 import { Box, Button, Typography } from "@mui/material";
 import Image from "next/image";
 import { styled } from "@mui/material/styles";
-import img1 from "../../../../public/static/images/comingsoon.png";
-import img2 from "../../../../public/static/images/mintwave.png";
+import { toast } from "react-toastify";
 
 export const Marketplace = () => {
+  const handleClaimFomo = () => {
+    toast(
+      () => (
+        <Box display="flex" flexDirection="column">
+          <Typography variant="h4" className="nes-text">
+            Coming soon!
+          </Typography>
+        </Box>
+      ),
+      { icon: "🍻" }
+    );
+  };
+
   return (
     <Box>
       <Box textAlign="center">
@@ -23,14 +35,16 @@ export const Marketplace = () => {
             <Image
               src="/static/images/gifclaimfomo.gif"
               alt="coming_soon"
-              // style={{ objectFit: "fill" }}
-              // layout="fill"
               height={540}
               width={960}
             />
           }
         </ImageWrapper>
-        <Button variant="contained" color="buttonBackground">
+        <Button
+          variant="contained"
+          color="buttonBackground"
+          onClick={handleClaimFomo}
+        >
           CLAIM $FOMO
         </Button>
       </Box>

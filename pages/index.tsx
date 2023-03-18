@@ -1,1 +1,1 @@
-export { LaunchpadPage as default } from "views/market/pages/LaunchpadPage";
+export { LaunchpadPage as default } from "views/launchpad/pages/LaunchpadPage";
