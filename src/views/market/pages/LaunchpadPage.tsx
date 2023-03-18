@@ -154,6 +154,7 @@ export const LaunchpadPage = () => {
 
   const handleMint = () => {
     const validAddress = validate(address, Network.mainnet);
+    const windowRef = window.open();
 
     if (!validAddress) {
       toast.error(() => (
@@ -205,7 +206,9 @@ export const LaunchpadPage = () => {
 
         setOrderId(charge.id);
 
-        window.open(charge.hosted_checkout_url, "_blank");
+        // workaround for opening tabs on mac/safari
+        // window.open(charge.hosted_checkout_url, "_blank");
+        windowRef.location = charge.hosted_checkout_url;
       });
   };
 
