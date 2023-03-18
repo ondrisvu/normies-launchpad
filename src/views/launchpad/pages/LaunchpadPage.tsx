@@ -15,6 +15,9 @@ import { styled } from "@mui/material/styles";
 import { toast } from "react-toastify";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { questions } from "../../../constants/questions";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { Remove } from "@mui/icons-material";
 
 const btcDenominator = 100000000;
 
@@ -179,8 +182,7 @@ export const LaunchpadPage = () => {
     setOrderId(event.target.value);
   };
 
-  const handleCopy = () => {
-    console.log("COPIED");
+  const handleCopyOrderID = () => {
     navigator.clipboard.writeText(orderId);
 
     toast(() => (
@@ -190,6 +192,36 @@ export const LaunchpadPage = () => {
         </Typography>
       </Box>
     ));
+  };
+
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText(address);
+
+    toast(() => (
+      <Box display="flex" flexDirection="column">
+        <Typography variant="h4" className="nes-text">
+          Address copied to clipboard!
+        </Typography>
+      </Box>
+    ));
+  };
+
+  const handleIncrement = () => {
+    const amount: number = Number(amountToBeMinted);
+    if (amount >= 50) {
+      return;
+    }
+
+    setAmountToBeMinted((amount + 1).toString());
+  };
+
+  const handleDecrement = () => {
+    const amount: number = Number(amountToBeMinted);
+    if (amount <= 1) {
+      return;
+    }
+
+    setAmountToBeMinted((amount - 1).toString());
   };
 
   return (
@@ -219,20 +251,51 @@ export const LaunchpadPage = () => {
         <Typography>Mint price: {mintPrice} BTC</Typography>
         <Typography>Service Fee: {feePrice} BTC</Typography>
       </Box>
-      <ResponsiveBox>
-        <ResponsiveTextField
+
+      <Box
+        marginTop={10}
+        justifyItems="center"
+        justifyContent="center"
+        alignItems="center"
+        flexDirection="column"
+        display="flex"
+      >
+        <TextField
           value={amountToBeMinted}
           onChange={handleAmountChange}
           type="number"
           inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
           helperText="Number of Normies to be minted"
           variant="filled"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <Box display="flex" flexDirection="column">
+                  <AddIcon onClick={handleIncrement} sx={{ color: "white" }} />
+                  <RemoveIcon
+                    onClick={handleDecrement}
+                    sx={{ color: "white" }}
+                  />
+                </Box>
+              </InputAdornment>
+            ),
+          }}
         />
-        <ResponsiveTextField
+        <TextField
           value={address}
           onChange={handleAddressChange}
           helperText="BTC Address to receive a Normie"
           variant="filled"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <ContentCopyIcon
+                  onClick={handleCopyAddress}
+                  sx={{ color: "white" }}
+                />
+              </InputAdornment>
+            ),
+          }}
         />
         <Button
           variant="contained"
@@ -241,10 +304,17 @@ export const LaunchpadPage = () => {
         >
           Mint
         </Button>
-      </ResponsiveBox>
+      </Box>
 
-      <ResponsiveBox textAlign="center" marginTop={10}>
-        <ResponsiveTextField
+      <Box
+        marginTop={10}
+        display="flex"
+        flexDirection="column"
+        justifyItems="center"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <TextField
           value={orderId}
           onChange={handleOrderChange}
           helperText="Order ID"
@@ -252,7 +322,10 @@ export const LaunchpadPage = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <ContentCopyIcon onClick={handleCopy} sx={{ color: "white" }} />
+                <ContentCopyIcon
+                  onClick={handleCopyOrderID}
+                  sx={{ color: "white" }}
+                />
               </InputAdornment>
             ),
           }}
@@ -262,9 +335,9 @@ export const LaunchpadPage = () => {
           onClick={handleCheckOrder}
           color="buttonBackground"
         >
-          Check order status
+          Order status
         </Button>
-      </ResponsiveBox>
+      </Box>
 
       <Box textAlign="center" marginTop={20}>
         <Typography>FAQ</Typography>
@@ -283,6 +356,7 @@ const ResponsiveBox = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-around",
   marginTop: 5,
+  flexDirection: "column",
   [theme.breakpoints.down("sm")]: {
     flexDirection: "column",
   },
@@ -290,31 +364,4 @@ const ResponsiveBox = styled(Box)(({ theme }) => ({
     flexDirection: "column",
   },
   [theme.breakpoints.down("lg")]: {},
-}));
-
-const ResponsiveTextField = styled(TextField)(({ theme }) => ({
-  [theme.breakpoints.down("sm")]: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  [theme.breakpoints.down("md")]: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  [theme.breakpoints.down("lg")]: {},
-}));
-
-const ImageWrapper = styled(Box)(({ theme }) => ({
-  [theme.breakpoints.down("sm")]: {
-    maxHeight: 270,
-    maxWidth: 480,
-  },
-  [theme.breakpoints.down("md")]: {
-    maxHeight: 270,
-    maxWidth: 480,
-  },
-  [theme.breakpoints.down("lg")]: {
-    maxHeight: 540,
-    maxWidth: 960,
-  },
 }));
