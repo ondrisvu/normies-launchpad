@@ -47,6 +47,7 @@ const MenuButton = ({
 }) => {
   const router = useRouter();
   const { pathname } = router;
+
   return (
     <Box paddingX={2}>
       <Button
@@ -129,7 +130,12 @@ export const Navbar = observer((props: Props) => {
                 </Box>
                 {isMobile ? null : (
                   <>
-                    <MenuButton title="Launchpad" link="/" />
+                    <MenuButton title="Normies Wave 2" link="/" />
+                    <MenuButton
+                      title="Launchpad"
+                      link="/launchpad"
+                      disabledParam
+                    />
                     <MenuButton title="Airdrop" link="/airdrop" />
                     <MenuButton title="Coming soon" link="" disabledParam />
                   </>
@@ -184,7 +190,8 @@ export const Navbar = observer((props: Props) => {
           </Link>
         </Box>
 
-        <MenuButton title="Launchpad" link="/" />
+        <MenuButton title="Normies Wave 2" link="/" />
+        <MenuButton title="Launchpad" link="/launchpad" />
         <MenuButton title="Airdrop" link="/airdrop" />
         <MenuButton title="Coming soon" link="" disabledParam />
       </Drawer>
