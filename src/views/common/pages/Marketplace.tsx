@@ -1,22 +1,9 @@
 import { Box, Button, Typography } from "@mui/material";
 import Image from "next/image";
 import { styled } from "@mui/material/styles";
-import { toast } from "react-toastify";
+import { toastComingSoon } from "utils/toast";
 
 export const Marketplace = () => {
-  const handleClaimFomo = () => {
-    toast(
-      () => (
-        <Box display="flex" flexDirection="column">
-          <Typography variant="h4" className="nes-text">
-            Coming soon!
-          </Typography>
-        </Box>
-      ),
-      { icon: "🍻" }
-    );
-  };
-
   return (
     <Box>
       <Box textAlign="center">
@@ -43,7 +30,7 @@ export const Marketplace = () => {
         <Button
           variant="contained"
           color="buttonBackground"
-          onClick={handleClaimFomo}
+          onClick={toastComingSoon}
         >
           CLAIM $FOMO
         </Button>

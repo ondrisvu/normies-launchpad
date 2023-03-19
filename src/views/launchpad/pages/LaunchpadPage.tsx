@@ -16,15 +16,14 @@ import {
 import TextField from "@mui/material/TextField";
 import Image from "next/image";
 import { validate, Network } from "bitcoin-address-validation";
-import { toast } from "react-toastify";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { questions } from "../../../constants/questions";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import QRCode from "react-qr-code";
 import { TabPanel } from "views/common/NormieTab";
-import { FocusOn } from "react-focus-on";
 import { theme } from "../../../theme";
+import { toastError, toastInfo } from "utils/toast";
 
 const btcDenominator = 100000000;
 
@@ -66,17 +65,7 @@ export const LaunchpadPage = () => {
 
   const handleCheckOrder = () => {
     if (orderId == "") {
-      toast.error(() => (
-        <Box display="flex" flexDirection="column">
-          <Typography variant="h4" className="nes-text">
-            Error
-          </Typography>
-          <Typography variant="subtitle2">
-            Please, fill in a valid order ID!
-          </Typography>
-        </Box>
-      ));
-
+      toastError("Error", "Please, fill in a valid order ID!");
       return;
     }
 
@@ -86,40 +75,16 @@ export const LaunchpadPage = () => {
         const { charge, status } = data;
 
         if (status == "error") {
-          toast.error(() => (
-            <Box display="flex" flexDirection="column">
-              <Typography variant="h4" className="nes-text">
-                Error
-              </Typography>
-              <Typography variant="subtitle2">
-                Something went wrong! Please, try again!
-              </Typography>
-            </Box>
-          ));
+          toastError("Error", "Something went wrong! Please, try again!");
         }
 
         if (charge.status == "unpaid") {
-          toast.error(() => (
-            <Box display="flex" flexDirection="column">
-              <Typography variant="h4" className="nes-text">
-                Order status for {orderId}
-              </Typography>
-              <Typography variant="subtitle2">
-                Order is {charge.status}
-              </Typography>
-            </Box>
-          ));
+          toastError(
+            `Order status for ${orderId}`,
+            `Order is ${charge.status}`
+          );
         } else {
-          toast(() => (
-            <Box display="flex" flexDirection="column">
-              <Typography variant="h4" className="nes-text">
-                Order status for {orderId}
-              </Typography>
-              <Typography variant="subtitle2">
-                Order is {charge.status}
-              </Typography>
-            </Box>
-          ));
+          toastInfo(`Order status for ${orderId}`, `Order is ${charge.status}`);
         }
       });
   };
@@ -128,17 +93,7 @@ export const LaunchpadPage = () => {
     const validAddress = validate(address, Network.mainnet);
 
     if (!validAddress) {
-      toast.error(() => (
-        <Box display="flex" flexDirection="column">
-          <Typography variant="h4" className="nes-text">
-            Error
-          </Typography>
-          <Typography variant="subtitle2">
-            Please, use a valid BTC address for receiving!
-          </Typography>
-        </Box>
-      ));
-
+      toastError("Error", "Please, use a valid BTC address for receiving!");
       return;
     }
 
@@ -161,17 +116,7 @@ export const LaunchpadPage = () => {
         console.log(data);
 
         if (status == "error") {
-          toast.error(() => (
-            <Box display="flex" flexDirection="column">
-              <Typography variant="h4" className="nes-text">
-                Error
-              </Typography>
-              <Typography variant="subtitle2">
-                Something went wrong! Please, try again!
-              </Typography>
-            </Box>
-          ));
-
+          toastError("Error", "Something went wrong! Please, try again!");
           return;
         }
 
@@ -212,25 +157,13 @@ export const LaunchpadPage = () => {
   const handleCopyOrderID = () => {
     navigator.clipboard.writeText(orderId);
 
-    toast(() => (
-      <Box display="flex" flexDirection="column">
-        <Typography variant="h4" className="nes-text">
-          Order ID copied to clipboard!
-        </Typography>
-      </Box>
-    ));
+    toastInfo("Order ID copied to clipboard!");
   };
 
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(address);
 
-    toast(() => (
-      <Box display="flex" flexDirection="column">
-        <Typography variant="h4" className="nes-text">
-          Address copied to clipboard!
-        </Typography>
-      </Box>
-    ));
+    toastInfo("Address copied to clipboard!");
   };
 
   const handleCopyQrCode = () => {
@@ -238,14 +171,11 @@ export const LaunchpadPage = () => {
       selectedPaymentType == PaymentType.Chain ? chainQrCode : lightningQrCode
     );
 
-    toast(() => (
-      <Box display="flex" flexDirection="column">
-        <Typography variant="h4" className="nes-text">
-          {selectedPaymentType == PaymentType.Chain ? "Address" : "Invoice"}{" "}
-          copied to clipboard!
-        </Typography>
-      </Box>
-    ));
+    toastInfo(
+      `${
+        selectedPaymentType == PaymentType.Chain ? "Address" : "Invoice"
+      } copied to clipboard!`
+    );
   };
 
   const handleIncrement = () => {

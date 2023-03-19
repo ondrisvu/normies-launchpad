@@ -17,6 +17,7 @@ import { ToastContainer } from "react-toastify";
 import { theme } from "theme";
 import { Navbar } from "views/common/Navbar";
 import ReactGA from "react-ga";
+import { ToastifyCloseButton } from "utils/toast";
 
 if (typeof window !== "undefined") {
   ReactGA.initialize(process.env.NEXT_PUBLIC_GA);
@@ -44,7 +45,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
               position="top-right"
               hideProgressBar
               pauseOnFocusLoss={false}
-              closeButton={true}
+              closeButton={ToastifyCloseButton}
               icon={true}
               autoClose={10000}
               newestOnTop

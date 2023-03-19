@@ -18,8 +18,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { Footer } from "./Footer";
-import { toast } from "react-toastify";
 import { makeStyles } from "@material-ui/core/styles";
+import { toastComingSoon } from "utils/toast";
 
 const useStyles = makeStyles({
   paper: {
@@ -51,21 +51,7 @@ const MenuButton = ({
     <Box paddingX={2}>
       <Button
         variant="text"
-        onClick={
-          disabledParam
-            ? () =>
-                toast(
-                  () => (
-                    <Box display="flex" flexDirection="column">
-                      <Typography variant="h4" className="nes-text">
-                        Coming soon!
-                      </Typography>
-                    </Box>
-                  ),
-                  { icon: "🍻" }
-                )
-            : () => router.push(link)
-        }
+        onClick={disabledParam ? toastComingSoon : () => router.push(link)}
         style={{
           borderBottom: pathname == link ? "4px solid #FFFFFF" : "none",
           borderRadius: "0",
