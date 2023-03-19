@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import React, { useMemo, useState, useEffect } from "react";
 import { Footer } from "./Footer";
 import { Extension } from "@terra-money/terra.js";
+import { toast } from "react-toastify";
 
 const StyledAppBar = styled(AppBar)`
   background: transparent;
@@ -31,14 +32,36 @@ type Props = {
   children: React.ReactNode;
 };
 
-const MenuButton = ({ title, link }: { title: string; link: string }) => {
+const MenuButton = ({
+  title,
+  link,
+  disabledParam,
+}: {
+  title: string;
+  link: string;
+  disabledParam?: boolean;
+}) => {
   const router = useRouter();
   const { pathname } = router;
   return (
     <Box paddingX={2}>
       <Button
         variant="text"
-        onClick={() => router.push(link)}
+        onClick={
+          disabledParam
+            ? () =>
+                toast(
+                  () => (
+                    <Box display="flex" flexDirection="column">
+                      <Typography variant="h4" className="nes-text">
+                        Coming soon!
+                      </Typography>
+                    </Box>
+                  ),
+                  { icon: "🍻" }
+                )
+            : () => router.push(link)
+        }
         style={{
           borderBottom: pathname == link ? "4px solid #A3A1FF" : "none",
           borderRadius: "0",
@@ -84,6 +107,7 @@ export const Navbar = observer((props: Props) => {
                 </Box>
                 <MenuButton title="Launchpad" link="/" />
                 <MenuButton title="Airdrop" link="/airdrop" />
+                <MenuButton title="Coming soon" link="" disabledParam />
               </Box>
             </Box>
           </Toolbar>
