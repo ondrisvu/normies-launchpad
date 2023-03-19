@@ -83,7 +83,7 @@ export const Navbar = observer((props: Props) => {
                   </Link>
                 </Box>
                 <MenuButton title="Launchpad" link="/" />
-                <MenuButton title="Coming soon" link="/marketplace" />
+                <MenuButton title="Airdrop" link="/airdrop" />
               </Box>
             </Box>
           </Toolbar>

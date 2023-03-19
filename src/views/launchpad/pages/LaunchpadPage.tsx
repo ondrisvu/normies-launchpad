@@ -349,7 +349,7 @@ export const LaunchpadPage = () => {
           onClick={handleMint}
           color="buttonBackground"
         >
-          Mint
+          Mint now
         </Button>
       </Box>
 
