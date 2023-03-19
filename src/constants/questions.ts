@@ -5,6 +5,14 @@ export interface Question {
 
 export const questions: Question[] = [
   {
+question: "How does this work?",
+answer: 'Choose the amount you would like to mint and click "Mint Now". We will inscribe them and send you the next available NFT IDs. Items are inscribed on payment receipt. Note: Lightning payment will be processed instantly.'
+  },
+  {
+question: "What if I mint late?",
+answer: "We do not guarantee any inscription numbers or NFT ids. It's first come first serve. If an order is placed and mint ends before payment is settled, we will provide refunds."
+  },
+  {
     question: "Should I use Bitcoin onchain or Lightning Network to pay?",
     answer: `We recommend that you use Lightning to pay for the inscription as they are instant and free. On chain Bitcoin payments can take much longer as they need to wait for 1-confirmation on Bitcoin.
 You can use Cash App , Wallet of Satoshi or any other Lightning wallet to pay Lightning invoices.`,
