@@ -25,7 +25,7 @@ export const theme = createTheme({
     textfieldBackground: createColor('#FFFFFF'),
     primary: {
       light: '#FBE1D9',
-      main: '#499BE7',
+      main: '#FFFFFF',
       dark: '#2B6AAE',
     },
     secondary: {

@@ -7,19 +7,27 @@ import {
   AccordionDetails,
   AccordionSummary,
   Accordion,
+  Modal,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Image from "next/image";
 import { validate, Network } from "bitcoin-address-validation";
-import { styled } from "@mui/material/styles";
 import { toast } from "react-toastify";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { questions } from "../../../constants/questions";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { Remove } from "@mui/icons-material";
+import QRCode from "react-qr-code";
+import { TabPanel } from "views/common/NormieTab";
 
 const btcDenominator = 100000000;
+
+enum PaymentType {
+  Lightning,
+  Chain,
+}
 
 export const LaunchpadPage = () => {
   const [amountToBeMinted, setAmountToBeMinted] = useState<string>("1");
@@ -29,6 +37,15 @@ export const LaunchpadPage = () => {
   const [totalNormiesCount, setTotalNormiesCount] = useState<number>(21);
   const [mintedCount, setMintedCount] = useState<number>(0);
   const [orderId, setOrderId] = useState<string>("");
+  const [qrModal, setQrModal] = useState<boolean>(false);
+  const [chainQrCode, setChainQrCode] = useState<string>("");
+  const [lightningQrCode, setLightningQrCode] = useState<string>("");
+  const [lightningExpirationDate, setLightningExpirationDate] =
+    useState<number>(0);
+  const [selectedPaymentType, setSelectedPaymentType] = useState<PaymentType>(
+    PaymentType.Lightning
+  );
+  const [totalCost, setTotalCost] = useState<number>(0);
 
   useEffect(() => {
     fetch("https://ordinalsbot.com/api/collection?id=normies-wave-2")
@@ -120,8 +137,6 @@ export const LaunchpadPage = () => {
       return;
     }
 
-    const windowRef = window.open();
-
     fetch("https://ordinalsbot.com/api/collectionorder", {
       method: "POST",
       body: JSON.stringify({
@@ -156,10 +171,17 @@ export const LaunchpadPage = () => {
         }
 
         setOrderId(charge.id);
+        setChainQrCode(charge.chain_invoice.address);
+        setLightningQrCode(charge.lightning_invoice.payreq);
+        setLightningExpirationDate(charge.lightning_invoice.expires_at);
+
+        setTotalCost(charge.amount / btcDenominator);
+
+        setQrModal(true);
 
         // workaround for opening tabs on mac/safari
         // window.open(charge.hosted_checkout_url, "_blank");
-        windowRef.location = charge.hosted_checkout_url;
+        // windowRef.location = charge.hosted_checkout_url;
       });
   };
 
@@ -206,6 +228,21 @@ export const LaunchpadPage = () => {
     ));
   };
 
+  const handleCopyQrCode = () => {
+    navigator.clipboard.writeText(
+      selectedPaymentType == PaymentType.Chain ? chainQrCode : lightningQrCode
+    );
+
+    toast(() => (
+      <Box display="flex" flexDirection="column">
+        <Typography variant="h4" className="nes-text">
+          {selectedPaymentType == PaymentType.Chain ? "Address" : "Invoice"}{" "}
+          copied to clipboard!
+        </Typography>
+      </Box>
+    ));
+  };
+
   const handleIncrement = () => {
     const amount: number = Number(amountToBeMinted);
     if (amount >= 50) {
@@ -224,18 +261,21 @@ export const LaunchpadPage = () => {
     setAmountToBeMinted((amount - 1).toString());
   };
 
+  const handleModalClose = () => {
+    console.log("Modal closed");
+
+    setQrModal(false);
+  };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setSelectedPaymentType(newValue);
+  };
+
   return (
     <>
       <Box display="flex" justifyContent="center">
-        {/* <Image
-          src="/static/images/mintwave-bg.png"
-          alt="mint_wave"
-          height={540}
-          width={960}
-          objectPosition="relative"
-        /> */}
         <Image
-          src="/static/images/mintwave.png"
+          src="/static/images/wave2.png"
           alt="mint_wave"
           height={540}
           width={960}
@@ -355,6 +395,109 @@ export const LaunchpadPage = () => {
           </Accordion>
         ))}
       </Box>
+      <Modal open={qrModal} onClose={() => {}}>
+        <>
+          <Typography
+            variant="h1"
+            style={{ right: 1, top: 1 }}
+            position="fixed"
+            onClick={handleModalClose}
+          >
+            X
+          </Typography>
+          <Box
+            sx={{
+              position: "absolute" as "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              backgroundColor: "#b86515",
+            }}
+            textAlign="center"
+            padding={5}
+          >
+            <Typography variant="h1">Payment for order</Typography>
+            <Typography variant="body1" marginBottom={3}>
+              {orderId}
+            </Typography>
+
+            <Tabs
+              value={selectedPaymentType}
+              onChange={handleTabChange}
+              sx={{ marginTop: 3, marginBottom: 3 }}
+              indicatorColor="secondary"
+              centered
+              TabIndicatorProps={{
+                style: { borderBottom: "4px solid #FFFFFF", color: "white" },
+              }}
+            >
+              <Tab
+                value={PaymentType.Chain}
+                label="Pay on chain BTC"
+                sx={{ fontSize: 11 }}
+              />
+              <Tab
+                value={PaymentType.Lightning}
+                label="Pay with Lightning"
+                sx={{ fontSize: 11 }}
+              />
+            </Tabs>
+
+            <TabPanel index={PaymentType.Chain} value={selectedPaymentType}>
+              <Box marginTop={2} marginBottom={5}>
+                <QRCode value={chainQrCode} />
+              </Box>
+              <Typography>Copy address below:</Typography>
+              <TextField
+                type="filled"
+                value={chainQrCode}
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <ContentCopyIcon
+                        onClick={handleCopyQrCode}
+                        sx={{ color: "white" }}
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </TabPanel>
+
+            <TabPanel index={PaymentType.Lightning} value={selectedPaymentType}>
+              <Box marginTop={2} marginBottom={5}>
+                <QRCode value={lightningQrCode} />
+              </Box>
+              <Typography>Copy invoice below:</Typography>
+              <TextField
+                value={lightningQrCode}
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <ContentCopyIcon
+                        onClick={handleCopyQrCode}
+                        sx={{ color: "white" }}
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </TabPanel>
+
+            <Box marginTop={5}>
+              <Typography>
+                Service fee: {feePrice} BTC ({feePrice * btcDenominator} sats)
+              </Typography>
+              <Typography>
+                Total amount: {totalCost} BTC ({totalCost * btcDenominator}{" "}
+                sats)
+              </Typography>
+            </Box>
+          </Box>
+        </>
+      </Modal>
     </>
   );
 };
