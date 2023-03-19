@@ -10,6 +10,7 @@ import {
   Modal,
   Tabs,
   Tab,
+  styled,
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Image from "next/image";
@@ -21,6 +22,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import QRCode from "react-qr-code";
 import { TabPanel } from "views/common/NormieTab";
+import { FocusOn } from "react-focus-on";
 
 const btcDenominator = 100000000;
 
@@ -395,8 +397,9 @@ export const LaunchpadPage = () => {
           </Accordion>
         ))}
       </Box>
+
       <Modal open={qrModal} onClose={() => {}} style={{ overflow: "scroll" }}>
-        <>
+        <FocusOn>
           <Typography
             variant="h1"
             style={{ right: 1, top: 1 }}
@@ -496,8 +499,23 @@ export const LaunchpadPage = () => {
               </Typography>
             </Box>
           </Box>
-        </>
+        </FocusOn>
       </Modal>
     </>
   );
 };
+
+const ImageWrapper = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    maxHeight: 270,
+    maxWidth: 480,
+  },
+  [theme.breakpoints.down("md")]: {
+    maxHeight: 270,
+    maxWidth: 480,
+  },
+  [theme.breakpoints.down("lg")]: {
+    maxHeight: 540,
+    maxWidth: 960,
+  },
+}));
