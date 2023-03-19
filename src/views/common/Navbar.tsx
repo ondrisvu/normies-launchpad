@@ -10,22 +10,16 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  Popover,
-  Alert,
   Drawer,
 } from "@mui/material";
-import { Routes } from "constants/Routes";
-import { includes } from "lodash";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Footer } from "./Footer";
-import { Extension } from "@terra-money/terra.js";
 import { toast } from "react-toastify";
 import { makeStyles } from "@material-ui/core/styles";
-import MuiDrawer from "@mui/material/Drawer";
 
 const useStyles = makeStyles({
   paper: {
@@ -73,7 +67,7 @@ const MenuButton = ({
             : () => router.push(link)
         }
         style={{
-          borderBottom: pathname == link ? "4px solid #A3A1FF" : "none",
+          borderBottom: pathname == link ? "4px solid #FFFFFF" : "none",
           borderRadius: "0",
         }}
       >
@@ -94,9 +88,6 @@ export const Navbar = observer((props: Props) => {
   const { children } = props;
 
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement>(null);
-
-  const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -118,13 +109,26 @@ export const Navbar = observer((props: Props) => {
               <Box display="flex" alignItems="flex-end">
                 <Box marginRight={2}>
                   {isMobile ? (
-                    <IconButton
-                      edge="start"
-                      onClick={toggleDrawer}
-                      size="large"
-                    >
-                      <MenuIcon fontSize="large" />
-                    </IconButton>
+                    <Box display="flex">
+                      <IconButton
+                        edge="start"
+                        onClick={toggleDrawer}
+                        size="large"
+                        sx={{ marginLeft: 3 }}
+                      >
+                        <MenuIcon fontSize="large" color="primary" />
+                      </IconButton>
+
+                      <Link href="/" passHref>
+                        <Box component="a" display="flex">
+                          <Image
+                            src="/static/images/LOGO PNG.png"
+                            width={100}
+                            height={100}
+                          />
+                        </Box>
+                      </Link>
+                    </Box>
                   ) : (
                     <Link href="/" passHref>
                       <Box component="a" display="flex">
@@ -137,9 +141,7 @@ export const Navbar = observer((props: Props) => {
                     </Link>
                   )}
                 </Box>
-                {isMobile ? (
-                  <></>
-                ) : (
+                {isMobile ? null : (
                   <>
                     <MenuButton title="Launchpad" link="/" />
                     <MenuButton title="Airdrop" link="/airdrop" />
@@ -178,10 +180,24 @@ export const Navbar = observer((props: Props) => {
           flexDirection: "column",
         }}
         classes={{ paper: styles.paper }}
+        ModalProps={{ onBackdropClick: toggleDrawer }}
       >
-        <IconButton edge="start" onClick={toggleDrawer} size="large">
-          <MenuIcon fontSize="large" />
-        </IconButton>
+        <Box display="flex">
+          <IconButton
+            edge="start"
+            onClick={toggleDrawer}
+            size="large"
+            sx={{ marginLeft: 2 }}
+          >
+            <MenuIcon fontSize="large" color="primary" />
+          </IconButton>
+          <Link href="/" passHref>
+            <Box component="a" display="flex">
+              <Image src="/static/images/LOGO PNG.png" width={70} height={70} />
+            </Box>
+          </Link>
+        </Box>
+
         <MenuButton title="Launchpad" link="/" />
         <MenuButton title="Airdrop" link="/airdrop" />
         <MenuButton title="Coming soon" link="" disabledParam />

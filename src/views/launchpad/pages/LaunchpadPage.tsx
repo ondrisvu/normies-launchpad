@@ -11,6 +11,7 @@ import {
   Tabs,
   Tab,
   styled,
+  useMediaQuery,
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Image from "next/image";
@@ -23,6 +24,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import QRCode from "react-qr-code";
 import { TabPanel } from "views/common/NormieTab";
 import { FocusOn } from "react-focus-on";
+import { theme } from "../../../theme";
 
 const btcDenominator = 100000000;
 
@@ -48,6 +50,7 @@ export const LaunchpadPage = () => {
     PaymentType.Lightning
   );
   const [totalCost, setTotalCost] = useState<number>(0);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     fetch("https://ordinalsbot.com/api/collection?id=normies-wave-2")
@@ -407,7 +410,7 @@ export const LaunchpadPage = () => {
           >
             X
           </Typography>
-          <Box
+          <ModulBox
             sx={{
               position: "absolute" as "absolute",
               top: "50%",
@@ -416,17 +419,22 @@ export const LaunchpadPage = () => {
               backgroundColor: "#b86515",
             }}
             textAlign="center"
-            padding={5}
           >
-            <Typography variant="h2">Payment for order</Typography>
-            <Typography variant="body1" marginBottom={3}>
+            <Typography variant={isMobile ? "h4" : "h2"}>
+              Payment for order
+            </Typography>
+            <Typography variant={isMobile ? "body2" : "body1"} marginBottom={3}>
               {orderId}
             </Typography>
 
             <Tabs
               value={selectedPaymentType}
               onChange={handleTabChange}
-              sx={{ marginTop: 3, marginBottom: 3 }}
+              sx={
+                isMobile
+                  ? { marginBottom: 1 }
+                  : { marginTop: 3, marginBottom: 3 }
+              }
               indicatorColor="secondary"
               centered
               TabIndicatorProps={{
@@ -435,13 +443,13 @@ export const LaunchpadPage = () => {
             >
               <Tab
                 value={PaymentType.Chain}
-                label="Pay on chain BTC"
-                sx={{ fontSize: 11 }}
+                label="On-chain BTC"
+                sx={isMobile ? { fontSize: 9 } : { fontSize: 11 }}
               />
               <Tab
                 value={PaymentType.Lightning}
-                label="Pay with Lightning"
-                sx={{ fontSize: 11 }}
+                label="Lightning"
+                sx={isMobile ? { fontSize: 9 } : { fontSize: 11 }}
               />
             </Tabs>
 
@@ -497,24 +505,21 @@ export const LaunchpadPage = () => {
                 sats)
               </Typography>
             </Box>
-          </Box>
+          </ModulBox>
         </>
       </Modal>
     </>
   );
 };
 
-const ImageWrapper = styled(Box)(({ theme }) => ({
+const ModulBox = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
-    maxHeight: 270,
-    maxWidth: 480,
+    padding: 2,
   },
   [theme.breakpoints.down("md")]: {
-    maxHeight: 270,
-    maxWidth: 480,
+    padding: 4,
   },
   [theme.breakpoints.down("lg")]: {
-    maxHeight: 540,
-    maxWidth: 960,
+    padding: 5,
   },
 }));
