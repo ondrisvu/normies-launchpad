@@ -26,7 +26,7 @@ import { FocusOn } from "react-focus-on";
 
 const btcDenominator = 100000000;
 
-enum PaymentType {
+export enum PaymentType {
   Lightning,
   Chain,
 }
@@ -397,9 +397,8 @@ export const LaunchpadPage = () => {
           </Accordion>
         ))}
       </Box>
-
       <Modal open={qrModal} onClose={() => {}} style={{ overflow: "scroll" }}>
-        <FocusOn>
+        <>
           <Typography
             variant="h1"
             style={{ right: 1, top: 1 }}
@@ -419,7 +418,7 @@ export const LaunchpadPage = () => {
             textAlign="center"
             padding={5}
           >
-            <Typography variant="h1">Payment for order</Typography>
+            <Typography variant="h2">Payment for order</Typography>
             <Typography variant="body1" marginBottom={3}>
               {orderId}
             </Typography>
@@ -499,7 +498,7 @@ export const LaunchpadPage = () => {
               </Typography>
             </Box>
           </Box>
-        </FocusOn>
+        </>
       </Modal>
     </>
   );

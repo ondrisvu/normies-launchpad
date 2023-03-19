@@ -12,6 +12,7 @@ import {
   useTheme,
   Popover,
   Alert,
+  Drawer,
 } from "@mui/material";
 import { Routes } from "constants/Routes";
 import { includes } from "lodash";
@@ -23,6 +24,15 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Footer } from "./Footer";
 import { Extension } from "@terra-money/terra.js";
 import { toast } from "react-toastify";
+import { makeStyles } from "@material-ui/core/styles";
+import MuiDrawer from "@mui/material/Drawer";
+
+const useStyles = makeStyles({
+  paper: {
+    background: "#b86515",
+    color: "white",
+  },
+});
 
 const StyledAppBar = styled(AppBar)`
   background: transparent;
@@ -80,7 +90,19 @@ const MenuButton = ({
 };
 
 export const Navbar = observer((props: Props) => {
+  const styles = useStyles();
   const { children } = props;
+
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement>(null);
+
+  const router = useRouter();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const toggleDrawer = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
 
   return (
     <>
@@ -95,19 +117,35 @@ export const Navbar = observer((props: Props) => {
             >
               <Box display="flex" alignItems="flex-end">
                 <Box marginRight={2}>
-                  <Link href="/" passHref>
-                    <Box component="a" display="flex">
-                      <Image
-                        src="/static/images/LOGO PNG.png"
-                        width={100}
-                        height={100}
-                      />
-                    </Box>
-                  </Link>
+                  {isMobile ? (
+                    <IconButton
+                      edge="start"
+                      onClick={toggleDrawer}
+                      size="large"
+                    >
+                      <MenuIcon fontSize="large" />
+                    </IconButton>
+                  ) : (
+                    <Link href="/" passHref>
+                      <Box component="a" display="flex">
+                        <Image
+                          src="/static/images/LOGO PNG.png"
+                          width={100}
+                          height={100}
+                        />
+                      </Box>
+                    </Link>
+                  )}
                 </Box>
-                <MenuButton title="Launchpad" link="/" />
-                <MenuButton title="Airdrop" link="/airdrop" />
-                <MenuButton title="Coming soon" link="" disabledParam />
+                {isMobile ? (
+                  <></>
+                ) : (
+                  <>
+                    <MenuButton title="Launchpad" link="/" />
+                    <MenuButton title="Airdrop" link="/airdrop" />
+                    <MenuButton title="Coming soon" link="" disabledParam />
+                  </>
+                )}
               </Box>
             </Box>
           </Toolbar>
@@ -127,10 +165,27 @@ export const Navbar = observer((props: Props) => {
               zIndex: -200,
             }}
           />
+
           {children}
           <Footer />
         </Box>
       </Container>
+      <Drawer
+        anchor="left"
+        open={isSidebarOpen}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+        classes={{ paper: styles.paper }}
+      >
+        <IconButton edge="start" onClick={toggleDrawer} size="large">
+          <MenuIcon fontSize="large" />
+        </IconButton>
+        <MenuButton title="Launchpad" link="/" />
+        <MenuButton title="Airdrop" link="/airdrop" />
+        <MenuButton title="Coming soon" link="" disabledParam />
+      </Drawer>
     </>
   );
 });
