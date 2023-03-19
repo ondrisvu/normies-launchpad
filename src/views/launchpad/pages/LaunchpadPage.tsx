@@ -395,7 +395,7 @@ export const LaunchpadPage = () => {
           </Accordion>
         ))}
       </Box>
-      <Modal open={qrModal} onClose={() => {}}>
+      <Modal open={qrModal} onClose={() => {}} style={{ overflow: "scroll" }}>
         <>
           <Typography
             variant="h1"
