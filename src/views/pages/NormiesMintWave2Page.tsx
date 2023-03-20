@@ -71,7 +71,7 @@ export const NormiesMintWave2Page = () => {
         setMintedCount(inscribedCount);
         setMintingStatus(status);
       });
-  }, []);
+  }, [pathname]);
 
   const handleCheckOrder = () => {
     if (orderId == "") {
