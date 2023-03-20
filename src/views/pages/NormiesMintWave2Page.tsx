@@ -17,26 +17,26 @@ import TextField from "@mui/material/TextField";
 import Image from "next/image";
 import { validate, Network } from "bitcoin-address-validation";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { questions } from "../../../constants/questions";
+import { questions } from "../../constants/questions";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import QRCode from "react-qr-code";
 import { TabPanel } from "views/common/NormieTab";
-import { theme } from "../../../theme";
+import { theme } from "../../theme";
 import { toastError, toastInfo } from "utils/toast";
-
-const btcDenominator = 100000000;
+import { btcDenominator } from "constants/projects";
+import { useRouter } from "next/router";
 
 export enum PaymentType {
   Lightning,
   Chain,
 }
 
-export const LaunchpadPage = () => {
+export const NormiesMintWave2Page = () => {
   const [amountToBeMinted, setAmountToBeMinted] = useState<string>("1");
   const [address, setAddress] = useState<string>("");
-  const [mintPrice, setMintPrice] = useState<number>(700000 / btcDenominator);
-  const [feePrice, setFeePrice] = useState<number>(65000 / btcDenominator); // divide by 10^10
+  const [mintPrice, setMintPrice] = useState<number>();
+  const [feePrice, setFeePrice] = useState<number>(); // divide by 10^10
   const [totalNormiesCount, setTotalNormiesCount] = useState<number>(21);
   const [mintedCount, setMintedCount] = useState<number>(0);
   const [orderId, setOrderId] = useState<string>("");
@@ -45,21 +45,31 @@ export const LaunchpadPage = () => {
   const [lightningQrCode, setLightningQrCode] = useState<string>("");
   const [lightningExpirationDate, setLightningExpirationDate] =
     useState<number>(0);
+  const [mintingStatus, setMintingStatus] = useState<string>("");
   const [selectedPaymentType, setSelectedPaymentType] = useState<PaymentType>(
     PaymentType.Lightning
   );
   const [totalCost, setTotalCost] = useState<number>(0);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const router = useRouter();
+  const { pathname } = router;
+
+  let url = "https://ordinalsbot.com/api/collection?id=normies-wave-2";
+
+  if (pathname != "/launchpad/normies-wave-2" && pathname != "/") {
+    url = "https://ordinalsbot.com/api/collection?id=normies";
+  }
   useEffect(() => {
-    fetch("https://ordinalsbot.com/api/collection?id=normies-wave-2")
+    fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        const { price, serviceFee, totalCount, inscribedCount } = data;
+        const { price, serviceFee, totalCount, inscribedCount, status } = data;
         setMintPrice(price / btcDenominator);
         setFeePrice(serviceFee / btcDenominator);
         setTotalNormiesCount(totalCount);
         setMintedCount(inscribedCount);
+        setMintingStatus(status);
       });
   }, []);
 
@@ -113,7 +123,6 @@ export const LaunchpadPage = () => {
       .then((response) => response.json())
       .then((data) => {
         const { charge, status } = data;
-        console.log(data);
 
         if (status == "error") {
           toastError("Error", "Something went wrong! Please, try again!");
@@ -128,10 +137,6 @@ export const LaunchpadPage = () => {
         setTotalCost(charge.amount / btcDenominator);
 
         setQrModal(true);
-
-        // workaround for opening tabs on mac/safari
-        // window.open(charge.hosted_checkout_url, "_blank");
-        // windowRef.location = charge.hosted_checkout_url;
       });
   };
 
@@ -139,8 +144,6 @@ export const LaunchpadPage = () => {
     if (parseInt(event.target.value) < 0) return;
     if (parseInt(event.target.value) > 50) {
       setAmountToBeMinted("50");
-      console.log("New amount is:");
-      console.log(amountToBeMinted);
       return;
     }
     setAmountToBeMinted(event.target.value);
@@ -197,8 +200,6 @@ export const LaunchpadPage = () => {
   };
 
   const handleModalClose = () => {
-    console.log("Modal closed");
-
     setQrModal(false);
   };
 
@@ -227,102 +228,113 @@ export const LaunchpadPage = () => {
         </Typography>
       </Box>
       <Box textAlign="center">
-        <Typography>
-          Remaining: {totalNormiesCount - mintedCount}/{totalNormiesCount}
+        <Typography variant={mintingStatus == "minting" ? null : "h1"}>
+          {mintingStatus == "minting"
+            ? `Remaining: ${
+                totalNormiesCount - mintedCount
+              }/${totalNormiesCount}`
+            : "MINTED OUT"}
         </Typography>
         <Typography>Mint price: {mintPrice} BTC</Typography>
         <Typography>Service Fee: {feePrice} BTC</Typography>
       </Box>
 
-      <Box
-        marginTop={5}
-        justifyItems="center"
-        justifyContent="center"
-        alignItems="center"
-        flexDirection="column"
-        display="flex"
-      >
-        <TextField
-          value={amountToBeMinted}
-          onChange={handleAmountChange}
-          type="number"
-          inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-          helperText="Number of Normies to be minted"
-          variant="filled"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Box display="flex" flexDirection="column">
-                  <AddIcon onClick={handleIncrement} sx={{ color: "white" }} />
-                  <RemoveIcon
-                    onClick={handleDecrement}
+      {mintingStatus == "minting" && (
+        <Box
+          marginTop={5}
+          justifyItems="center"
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
+          display="flex"
+        >
+          <TextField
+            value={amountToBeMinted}
+            onChange={handleAmountChange}
+            type="number"
+            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+            helperText="Number of Normies to be minted"
+            variant="filled"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Box display="flex" flexDirection="column">
+                    <AddIcon
+                      onClick={handleIncrement}
+                      sx={{ color: "white" }}
+                    />
+                    <RemoveIcon
+                      onClick={handleDecrement}
+                      sx={{ color: "white" }}
+                    />
+                  </Box>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            value={address}
+            onChange={handleAddressChange}
+            helperText="BTC Address to receive a Normie"
+            variant="filled"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <ContentCopyIcon
+                    onClick={handleCopyAddress}
                     sx={{ color: "white" }}
                   />
-                </Box>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          value={address}
-          onChange={handleAddressChange}
-          helperText="BTC Address to receive a Normie"
-          variant="filled"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <ContentCopyIcon
-                  onClick={handleCopyAddress}
-                  sx={{ color: "white" }}
-                />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Button
-          variant="contained"
-          onClick={handleMint}
-          color="buttonBackground"
-        >
-          Mint now
-        </Button>
-      </Box>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            variant="contained"
+            onClick={handleMint}
+            color="buttonBackground"
+          >
+            Mint now
+          </Button>
+        </Box>
+      )}
 
-      <Box
-        marginTop={5}
-        display="flex"
-        flexDirection="column"
-        justifyItems="center"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <TextField
-          value={orderId}
-          onChange={handleOrderChange}
-          helperText="Order ID"
-          variant="filled"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <ContentCopyIcon
-                  onClick={handleCopyOrderID}
-                  sx={{ color: "white" }}
-                />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Button
-          variant="contained"
-          onClick={handleCheckOrder}
-          color="buttonBackground"
+      {mintingStatus == "minting" && (
+        <Box
+          marginTop={5}
+          display="flex"
+          flexDirection="column"
+          justifyItems="center"
+          justifyContent="center"
+          alignItems="center"
         >
-          Order status
-        </Button>
-      </Box>
+          <TextField
+            value={orderId}
+            onChange={handleOrderChange}
+            helperText="Order ID"
+            variant="filled"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <ContentCopyIcon
+                    onClick={handleCopyOrderID}
+                    sx={{ color: "white" }}
+                  />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            variant="contained"
+            onClick={handleCheckOrder}
+            color="buttonBackground"
+          >
+            Order status
+          </Button>
+        </Box>
+      )}
 
       <Box textAlign="center" marginTop={20}>
-        <Typography>FAQ</Typography>
+        <Typography variant="h1">FAQ</Typography>
         {questions.map((question) => (
           <Accordion sx={{ backgroundColor: "#b86515" }}>
             <AccordionSummary>{question.question}</AccordionSummary>

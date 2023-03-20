@@ -1,1 +1,1 @@
-export { NormiesMintWave2Page as default } from "views/launchpad/pages/NormiesMintWave2Page";
+export { LaunchpadPage as default } from "views/pages/LaunchpadPage";

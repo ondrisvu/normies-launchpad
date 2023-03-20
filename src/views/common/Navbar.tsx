@@ -76,7 +76,7 @@ export const Navbar = observer((props: Props) => {
 
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const toggleDrawer = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -130,12 +130,8 @@ export const Navbar = observer((props: Props) => {
                 </Box>
                 {isMobile ? null : (
                   <>
-                    <MenuButton title="Normies Wave 2" link="/" />
-                    <MenuButton
-                      title="Launchpad"
-                      link="/launchpad"
-                      disabledParam
-                    />
+                    <MenuButton title="Mint Wave 2" link="/" />
+                    <MenuButton title="Launchpad" link="/launchpad" />
                     <MenuButton title="Airdrop" link="/airdrop" />
                     <MenuButton title="Coming soon" link="" disabledParam />
                   </>
@@ -190,7 +186,7 @@ export const Navbar = observer((props: Props) => {
           </Link>
         </Box>
 
-        <MenuButton title="Normies Wave 2" link="/" />
+        <MenuButton title="Mint Wave 2" link="/" />
         <MenuButton title="Launchpad" link="/launchpad" />
         <MenuButton title="Airdrop" link="/airdrop" />
         <MenuButton title="Coming soon" link="" disabledParam />

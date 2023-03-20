@@ -34,7 +34,7 @@ export const toastComingSoon = () => {
           Coming soon!
         </Typography>
       </Box>
-    ),
-    { icon: "🍻" }
+    )
+    // { icon: "🍻" }
   );
 };
