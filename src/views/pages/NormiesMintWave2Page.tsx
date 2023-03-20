@@ -26,6 +26,7 @@ import { theme } from "../../theme";
 import { toastError, toastInfo } from "utils/toast";
 import { btcDenominator } from "constants/projects";
 import { useRouter } from "next/router";
+import CollectionId from "../../../pages/launchpad/[collectionId]";
 
 export enum PaymentType {
   Lightning,
@@ -51,6 +52,7 @@ export const NormiesMintWave2Page = () => {
   );
   const [totalCost, setTotalCost] = useState<number>(0);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [currentPath, setCurrentPath] = useState<string>("");
 
   const router = useRouter();
   const { pathname } = router;
@@ -70,6 +72,7 @@ export const NormiesMintWave2Page = () => {
         setTotalNormiesCount(totalCount);
         setMintedCount(inscribedCount);
         setMintingStatus(status);
+        setCurrentPath(pathname);
       });
   }, [pathname]);
 
@@ -211,7 +214,11 @@ export const NormiesMintWave2Page = () => {
     <>
       <Box display="flex" justifyContent="center">
         <Image
-          src="/static/images/wave2.png"
+          src={
+            currentPath != "/launchpad/normies-wave-2" && currentPath != "/"
+              ? "/static/images/soldoutpage.png"
+              : "/static/images/wave2.png"
+          }
           alt="mint_wave"
           height={540}
           width={960}
@@ -236,7 +243,7 @@ export const NormiesMintWave2Page = () => {
             : "MINTED OUT"}
         </Typography>
         <Typography>Mint price: {mintPrice} BTC</Typography>
-        <Typography>Service Fee: {feePrice} BTC</Typography>
+        <Typography>Inscription Fee: 0.0009 BTC</Typography>
       </Box>
 
       {mintingStatus == "minting" && (
@@ -440,7 +447,8 @@ export const NormiesMintWave2Page = () => {
 
             <Box marginTop={5}>
               <Typography>
-                Service fee: {feePrice} BTC ({feePrice * btcDenominator} sats)
+                Inscription fee: {feePrice} BTC ({feePrice * btcDenominator}{" "}
+                sats)
               </Typography>
               <Typography>
                 Total amount: {totalCost} BTC ({totalCost * btcDenominator}{" "}

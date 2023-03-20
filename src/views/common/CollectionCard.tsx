@@ -36,9 +36,14 @@ export const CollectionCard = ({ collectionId }) => {
         setCollectionName(name);
         setTotalCount(totalCount);
         setMintedCount(inscribedCount);
-        setCoverImage(cover);
         setMintPrice(price);
         setCollectionStatus(status);
+
+        if (collectionId == "normies") {
+          setCoverImage("/static/images/soldoutcollection.png");
+        } else if (collectionId == "normies-wave-2") {
+          setCoverImage("/static/images/wave2collection.png");
+        }
       });
   }, []);
 
@@ -67,11 +72,7 @@ export const CollectionCard = ({ collectionId }) => {
       >
         <Image
           loader={imageLoader}
-          src={
-            collectionId == "normies"
-              ? "https://ordinalsbot.s3.us-west-2.amazonaws.com/90843eca-3cd6-47c0-8ccb-5eb41cf6ff50_featured.png?w=1920&q=75"
-              : coverImage
-          }
+          src={coverImage}
           alt={`${collectionId}-cover`}
           style={{
             objectFit: "cover",
@@ -105,22 +106,27 @@ export const CollectionCard = ({ collectionId }) => {
 
 export const EmptyCard = () => {
   return (
-    <Box
-      sx={{
-        backgroundColor: "#b86515",
-        margin: 1,
-        "&:hover": { transform: "scale3d(1.1, 1.1, 1)" },
-      }}
-      display="flex"
-      flexDirection="column"
-      borderRadius={0.5}
-      height={200}
-      width={200}
-      textAlign="center"
-      justifyContent="center"
-      onClick={toastComingSoon}
+    <a
+      target="_blank"
+      href="https://docs.google.com/forms/d/e/1FAIpQLSehkoDh5qBO8aKzedNDeYyYFQWgJR23Esn96ytsygVIsSk65g/viewform"
+      style={{ textDecoration: "none" }}
     >
-      <Typography>+Create collection</Typography>
-    </Box>
+      <Box
+        sx={{
+          backgroundColor: "#b86515",
+          margin: 1,
+          "&:hover": { transform: "scale3d(1.1, 1.1, 1)" },
+        }}
+        display="flex"
+        flexDirection="column"
+        borderRadius={0.5}
+        height={200}
+        width={200}
+        textAlign="center"
+        justifyContent="center"
+      >
+        <Typography>Apply for Launchpad</Typography>
+      </Box>
+    </a>
   );
 };
