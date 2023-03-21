@@ -50,30 +50,36 @@ export const NormiesMintWave2Page = () => {
   const [selectedPaymentType, setSelectedPaymentType] = useState<PaymentType>(
     PaymentType.Lightning
   );
-  const [totalCost, setTotalCost] = useState<number>(0);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [currentPath, setCurrentPath] = useState<string>("");
 
   const router = useRouter();
   const { pathname } = router;
 
+  const isMintWave1 = () => {
+    return pathname == "/launchpad/normies";
+  };
+
   let url = "https://ordinalsbot.com/api/collection?id=normies-wave-2";
 
-  if (pathname != "/launchpad/normies-wave-2" && pathname != "/") {
+  if (isMintWave1()) {
     url = "https://ordinalsbot.com/api/collection?id=normies";
   }
-
-  const isMintWave1 = () => {
-    return currentPath != "/launchpad/normies-wave-2" && currentPath != "/";
-  };
 
   useEffect(() => {
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
         const { price, serviceFee, totalCount, inscribedCount, status } = data;
-        setMintPrice(price / btcDenominator);
-        setFeePrice(serviceFee / btcDenominator);
+
+        if (isMintWave1()) {
+          setMintPrice(price);
+          setFeePrice(serviceFee);
+        } else {
+          setMintPrice(670000);
+          setFeePrice(90000);
+        }
+
         setTotalNormiesCount(totalCount);
         setMintedCount(inscribedCount);
         setMintingStatus(status);
@@ -141,8 +147,6 @@ export const NormiesMintWave2Page = () => {
         setChainQrCode(charge.chain_invoice.address);
         setLightningQrCode(charge.lightning_invoice.payreq);
         setLightningExpirationDate(charge.lightning_invoice.expires_at);
-
-        setTotalCost(charge.amount / btcDenominator);
 
         setQrModal(true);
       });
@@ -252,11 +256,9 @@ export const NormiesMintWave2Page = () => {
         </Typography>
         {/* <Typography>Mint price: {mintPrice} BTC</Typography>
         <Typography>Inscription Fee: {feePrice} BTC</Typography> */}
+        <Typography>Mint price: {mintPrice / btcDenominator} BTC</Typography>
         <Typography>
-          Mint price: {isMintWave1() ? mintPrice : "0.007"} BTC
-        </Typography>
-        <Typography>
-          Inscription Fee: {isMintWave1() ? feePrice : "0.0009"} BTC
+          Inscription Fee: {feePrice / btcDenominator} BTC
         </Typography>
       </Box>
 
@@ -462,12 +464,12 @@ export const NormiesMintWave2Page = () => {
 
             <Box marginTop={5}>
               <Typography>
-                Inscription fee: {feePrice} BTC (
-                {Math.round(feePrice * btcDenominator)} sats)
+                Inscription fee: {feePrice / btcDenominator} BTC (
+                {Math.round(feePrice)} sats)
               </Typography>
               <Typography>
-                Total amount: {totalCost} BTC ({totalCost * btcDenominator}{" "}
-                sats)
+                Total amount: {(mintPrice + feePrice) / btcDenominator} BTC (
+                {mintPrice + feePrice} sats)
               </Typography>
             </Box>
           </ModulBox>
