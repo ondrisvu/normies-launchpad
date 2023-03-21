@@ -89,10 +89,13 @@ export const CollectionCard = ({ collectionId }) => {
             <Typography variant="caption">Price</Typography>
           </Box>
           <Box display="flex" justifyContent="space-around">
-            <Typography variant="caption">
+            <Typography
+              variant="caption"
+              color={collectionStatus == "minting" ? null : "red"}
+            >
               {collectionStatus == "minting"
                 ? `${totalCount - mintedCount}/${totalCount}`
-                : "Minted"}
+                : "MINTED"}
             </Typography>
             <Typography variant="caption">
               {mintPrice / btcDenominator} BTC

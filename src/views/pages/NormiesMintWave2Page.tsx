@@ -62,6 +62,11 @@ export const NormiesMintWave2Page = () => {
   if (pathname != "/launchpad/normies-wave-2" && pathname != "/") {
     url = "https://ordinalsbot.com/api/collection?id=normies";
   }
+
+  const isMintWave1 = () => {
+    return currentPath != "/launchpad/normies-wave-2" && currentPath != "/";
+  };
+
   useEffect(() => {
     fetch(url)
       .then((response) => response.json())
@@ -215,7 +220,7 @@ export const NormiesMintWave2Page = () => {
       <Box display="flex" justifyContent="center">
         <Image
           src={
-            currentPath != "/launchpad/normies-wave-2" && currentPath != "/"
+            isMintWave1()
               ? "/static/images/soldoutpage.png"
               : "/static/images/wave2.png"
           }
@@ -235,15 +240,24 @@ export const NormiesMintWave2Page = () => {
         </Typography>
       </Box>
       <Box textAlign="center">
-        <Typography variant={mintingStatus == "minting" ? null : "h1"}>
+        <Typography
+          variant={mintingStatus == "minting" ? null : "h1"}
+          color={mintingStatus == "minting" ? null : "red"}
+        >
           {mintingStatus == "minting"
             ? `Remaining: ${
                 totalNormiesCount - mintedCount
               }/${totalNormiesCount}`
             : "MINTED OUT"}
         </Typography>
-        <Typography>Mint price: {mintPrice} BTC</Typography>
-        <Typography>Inscription Fee: 0.0009 BTC</Typography>
+        {/* <Typography>Mint price: {mintPrice} BTC</Typography>
+        <Typography>Inscription Fee: {feePrice} BTC</Typography> */}
+        <Typography>
+          Mint price: {isMintWave1() ? mintPrice : "0.007"} BTC
+        </Typography>
+        <Typography>
+          Inscription Fee: {isMintWave1() ? feePrice : "0.0009"} BTC
+        </Typography>
       </Box>
 
       {mintingStatus == "minting" && (
@@ -366,6 +380,7 @@ export const NormiesMintWave2Page = () => {
               left: "50%",
               transform: "translate(-50%, -50%)",
               backgroundColor: "#b86515",
+              borderRadius: 0.5,
             }}
             textAlign="center"
           >
@@ -447,8 +462,8 @@ export const NormiesMintWave2Page = () => {
 
             <Box marginTop={5}>
               <Typography>
-                Inscription fee: {feePrice} BTC ({feePrice * btcDenominator}{" "}
-                sats)
+                Inscription fee: {feePrice} BTC (
+                {Math.round(feePrice * btcDenominator)} sats)
               </Typography>
               <Typography>
                 Total amount: {totalCost} BTC ({totalCost * btcDenominator}{" "}
@@ -471,5 +486,8 @@ const ModulBox = styled(Box)(({ theme }) => ({
   },
   [theme.breakpoints.down("lg")]: {
     padding: 5,
+  },
+  [theme.breakpoints.up("lg")]: {
+    padding: 8,
   },
 }));
