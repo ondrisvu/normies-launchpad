@@ -66,7 +66,7 @@ export const CollectionCard = ({ collectionId }) => {
         display="flex"
         sx={{
           position: "relative",
-          width: 200,
+          width: 300,
           height: 200,
         }}
       >
