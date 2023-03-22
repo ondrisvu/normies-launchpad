@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { btcDenominator } from "constants/projects";
 import { useRouter } from "next/router";
-import { toastComingSoon } from "utils/toast";
-import Link from "next/link";
 
 export const CollectionCard = ({ collectionId }) => {
+  const router = useRouter();
+
   const [collectionName, setCollectionName] = useState<string>("");
   const [totalCount, setTotalCount] = useState<number>(0);
   const [mintedCount, setMintedCount] = useState<number>(0);
@@ -26,8 +26,6 @@ export const CollectionCard = ({ collectionId }) => {
     }
   };
 
-  const router = useRouter();
-
   useEffect(() => {
     fetch(`https://ordinalsbot.com/api/collection?id=${collectionId}`)
       .then((response) => response.json())
@@ -36,8 +34,13 @@ export const CollectionCard = ({ collectionId }) => {
         setCollectionName(name);
         setTotalCount(totalCount);
         setMintedCount(inscribedCount);
-        setMintPrice(price);
         setCollectionStatus(status);
+
+        if (collectionId == "normies") {
+          setMintPrice(price);
+        } else {
+          setMintPrice(670000);
+        }
 
         if (collectionId == "normies") {
           setCoverImage("/static/images/soldoutcollection.png");
